@@ -265,8 +265,6 @@ module mojo_top (
         counter.d = 0;
         state.d = state.CASEA;}
     
-    
-    
     //test case for "A" boolean operation
     state.CASEA:
       alumod.alufn = 6b011010;		//subtraction operation of ALU
