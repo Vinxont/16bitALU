@@ -34,7 +34,7 @@ module alu (
       b00:                          //if alufn[5:4] == 00, select adder output 
         alu = add.out; 
       b01:                          //if alufn[5:4] == 00, select boolean output
-        alu = boole.bool;
+        alu = boole.boolean;
       b10:                          //if alufn[5:4] == 00, select shifter output
         alu = shift.s;
       b11:                          //if alufn[5:4] == 00, select compare output
