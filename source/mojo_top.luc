@@ -66,16 +66,15 @@ module mojo_top (
     alufn = io_dip[0][7:2]; //assigning dip switches to alufn input
     alumod.alufn = alufn;   //connecting alufn to input of module alu
     alumod.a = a;           //connecting a to input of module alu
-    alumod.b = b;           //connecting a to input of module alu
+    alumod.b = b;           //connecting b to input of module alu
     alu = alumod.alu;       //connecting alu to output of module alu
-    io_led[0] = a[7:0];
-    io_led[1] = a[15:8];
+    io_led[2:1] = c{{alu[15:8]},{alu[7:0]}};                                 
+    io_led[0][7:5] = c{alumod.z, alumod.v, alumod.n};       
 
     case (state.q){                 //initial start state of finite state machine
      state.START:
         if(io_button[1] == 1){      //if button is pressed, move to next state
            state.d = state.CASEADD;}
-        
         if(io_dip[0][0]){           //if dip switch is down, change from auto testing to manual testing
             state.d = state.MANUAL;}
     
@@ -92,24 +91,17 @@ module mojo_top (
           store_b.d = b;
         }
       }
-
       alufn = io_dip[0][7:2];       //assigning dip switches to alufn input
       if(io_button[3]){             //if button is pressed, store input alufn into a d flip flip
-        store_alufn.d = alufn;}
-          
+        store_alufn.d = alufn;}                  
       if(io_button[4]){             //if button is pressed, reset a,b,alufn
         store_a.d = 16b0;
         store_b.d = 16b0;
         store_alufn.d = 6b0;}
-        
       alumod.a = store_a.q;         //input stored value of a into module alu
       alumod.b = store_b.q;         //input stored value of b into module alu
       alumod.alufn = store_alufn.q; //input stored value of alufn into module alu
-      alu = alumod.alu;             //assigning alu to output of module alu
-      io_led[1] = alu[7:0];         //display alu output on onboard leds
-      io_led[2] = alu[15:8];
       io_led[0][0] = 1;
-      io_led[0][7:5] = c{alumod.z, alumod.v, alumod.n};
       if(io_button[2]){             //if button is pressed, return to initial state
         state.d = state.START;}
      
@@ -117,25 +109,20 @@ module mojo_top (
     //21930 + 8360 = 30190
     state.CASEADD:	
       alumod.alufn = 6b0;             //assigning predetermined value of alufn
-      alumod.a = 16b0101010110101010; //assigning predetermined value of a
-      alumod.b = 16b0010000001000100; //assigning predetermined value of b
-      alu = alumod.alu;			          //assign output of alu module to output of mojo
+      alumod.a = 16b0000000000001000; //assigning predetermined value of a
+      alumod.b = 16b0000000000000000; //assigning predetermined value of b
       if(io_dip[2][7]){
         alu = alu + b1;}  
-      if(alu == b0111010111101110){   //testing for error                                    
+      if(alu == 16b0000000000001000){   //testing for error                                    
         seg.values = {5d10, 5d13, 5d13, 5d31};}
       else{                            //if alu output does not match expected output, display Err on seven segment display
         seg.values = {5d14,5d2,5d2,5d31};}
-      io_led[1] = alu[7:0];           //center 8 leds display first 8 bits of sum
-      io_led[2] = alu[15:8];          //left 8 leds display 8 second bits of sum                                   
-      io_led[0][7:5] = c{alumod.z, alumod.v, alumod.n};
       if(io_dip[0][0]){               //checking switch for manual state
         state.d = state.MANUAL;}
-            
-    counter.d = counter.q+1;                    //add 1 to clock every time code loops
-    if(io_button[3] | counter.q[TIMER]==1){     //if clock timer reaches TIMER or if button input is detected
-      counter.d = 0;                            //reset clock back to 0
-      state.d = state.CASESUBTRACT1;}           //switching to next test case
+      counter.d = counter.q+1;                    //add 1 to clock every time code loops
+      if(io_button[3] | counter.q[TIMER]==1){     //if clock timer reaches TIMER or if button input is detected
+        counter.d = 0;                            //reset clock back to 0
+        state.d = state.CASESUBTRACT1;}           //switching to next test case
       
     //test case for subtractor
     //17 - 8 = 9
@@ -143,11 +130,7 @@ module mojo_top (
       alumod.alufn = 6b1;
       alumod.a = 16b0000000000010001;	
       alumod.b = 16b0000000000001000;	
-      io_led[1] = alu[7:0]; 
-      io_led[2] = alu[15:8]; 
-      alu = alumod.alu;
       seg.values = {5d5,5d3,5d11,5d1};
-      io_led[0][7:5] = c{alumod.z, alumod.v, alumod.n};
       if(io_dip[0][0]){
         state.d = state.MANUAL;}
       counter.d = counter.q+1;
@@ -161,11 +144,7 @@ module mojo_top (
       alumod.alufn = 6b1;		
       alumod.a = 16b1111111111111011;
       alumod.b = 16b0000000000001000;
-      io_led[1] = alu[7:0]; 
-      io_led[2] = alu[15:8]; 
-      alu = alumod.alu;
       seg.values = {5d5,5d3,5d11,5d22};
-      io_led[0][7:5] = c{alumod.z, alumod.v, alumod.n};
       if(io_dip[0][0]){
         state.d = state.MANUAL;}
       counter.d = counter.q+1;
@@ -179,11 +158,7 @@ module mojo_top (
       alumod.alufn = 6b0;		
       alumod.a = 16b0100000000000000;	
       alumod.b = 16b0100000000000000;	
-      alu = alumod.alu;
       seg.values = {5d0,5d15,5d4,5d1};
-      io_led[0][7:5] = c{alumod.z, alumod.v, alumod.n};
-      io_led[1] = alu[7:0]; 
-      io_led[2] = alu[15:8];
       if(io_dip[0][0]){
         state.d = state.MANUAL;}
       counter.d = counter.q+1;
@@ -197,11 +172,7 @@ module mojo_top (
       alumod.alufn = 6b1;		
       alumod.a = 16b0110000000000000;
       alumod.b = 16b1100000000000000;	
-      alu = alumod.alu;
       seg.values = {5d0,5d15,5d4,5d22};
-      io_led[0][7:5] = c{alumod.z, alumod.v, alumod.n};
-      io_led[1] = alu[7:0]; //center 8 leds display first 8 bits of sum
-      io_led[2] = alu[15:8]; //left 8 leds display 8 second bits of sum
       if(io_dip[0][0]){
         state.d = state.MANUAL;}
       counter.d = counter.q+1;
@@ -214,16 +185,12 @@ module mojo_top (
       alumod.alufn = 6b011000;		//subtraction operation of ALU
       alumod.a = 16b0110100001010111;	//input a
       alumod.b = 16b1010110000001000;	//input b
-      alu = alumod.alu;
       if (io_dip[2][7]){
           alu = alu + b1;}
       if (alu == 16b0010100000000000){
           seg.values = {5d10,5d16,5d13,5d8};}
       else {
           seg.values = {5d14,5d2,5d2,5d31};}
-      io_led[0][7:5] = c{alumod.z, alumod.v, alumod.n};
-      io_led[1] = alu[7:0]; //center 8 leds display first 8 bits of sum
-      io_led[2] = alu[15:8]; //left 8 leds display 8 second bits of sum
       if(io_dip[0][0]){
         state.d = state.MANUAL;}
       counter.d = counter.q+1;
@@ -236,11 +203,7 @@ module mojo_top (
       alumod.alufn = 6b011110;		//subtraction operation of ALU
       alumod.a = 16b0110100001010111;	//input a
       alumod.b = 16b1010110000001000;	//input b
-      alu = alumod.alu;
       seg.values = {5d0,5d2,5d31,5d31};
-      io_led[0][7:5] = c{alumod.z, alumod.v, alumod.n};
-      io_led[1] = alu[7:0]; //center 8 leds display first 8 bits of sum
-      io_led[2] = alu[15:8]; //left 8 leds display 8 second bits of sum
       if(io_dip[0][0]){
         state.d = state.MANUAL;}
       counter.d = counter.q+1;
@@ -253,11 +216,7 @@ module mojo_top (
       alumod.alufn = 6b010110;		//subtraction operation of ALU
       alumod.a = 16b0110100001010111;	//input a
       alumod.b = 16b1010110000001000;	//input b
-      alu = alumod.alu;
       seg.values = {5d17,5d0,5d2,5d31};
-      io_led[0][7:5] = c{alumod.z, alumod.v, alumod.n};
-      io_led[1] = alu[7:0]; //center 8 leds display first 8 bits of sum
-      io_led[2] = alu[15:8]; //left 8 leds display 8 second bits of sum
       if(io_dip[0][0]){
         state.d = state.MANUAL;}
       counter.d = counter.q+1;
@@ -270,11 +229,7 @@ module mojo_top (
       alumod.alufn = 6b011010;		//subtraction operation of ALU
       alumod.a = 16b0110100001010111;	//input a
       alumod.b = 16b1010110000001000;	//input b
-      alu = alumod.alu;
       seg.values = {5d10,5d31,5d31,5d31};
-      io_led[0][7:5] = c{alumod.z, alumod.v, alumod.n};
-      io_led[1] = alu[7:0]; //center 8 leds display first 8 bits of sum
-      io_led[2] = alu[15:8]; //left 8 leds display 8 second bits of sum
       if(io_dip[0][0]){
         state.d = state.MANUAL;}
       counter.d = counter.q+1;
@@ -287,16 +242,12 @@ module mojo_top (
       alumod.alufn = 6b100000;		//subtraction operation of ALU
       alumod.a = 16b0100100001101100;	//input a
       alumod.b = 16b0000000000000100;	//input b
-      alu = alumod.alu;
       if(io_dip[2][7]){
           alu = alu + b1;}
       if(alu == 16b1000011011000000){
         seg.values = {5d5,5d17,5d4,5d8};}
       else{
         seg.values = {5d14,5d2,5d2,5d31};}
-      io_led[0][7:5] = c{alumod.z, alumod.v, alumod.n};
-      io_led[1] = alu[7:0]; //center 8 leds display first 8 bits of sum
-      io_led[2] = alu[15:8]; //left 8 leds display 8 second bits of sum
       if(io_dip[0][0]){
         state.d = state.MANUAL;}
       counter.d = counter.q+1;
@@ -309,11 +260,7 @@ module mojo_top (
       alumod.alufn = 6b100001;		//subtraction operation of ALU
       alumod.a = 16b0110110011110000;	//input a
       alumod.b = 16b0000000000000110;	//input b
-      alu = alumod.alu;
       seg.values = {5d5,5d17,5d2,5d31};
-      io_led[0][7:5] = c{alumod.z, alumod.v, alumod.n};
-      io_led[1] = alu[7:0]; //center 8 leds display first 8 bits of sum
-      io_led[2] = alu[15:8]; //left 8 leds display 8 second bits of sum
       if(io_dip[0][0]){
         state.d = state.MANUAL;}
       counter.d = counter.q+1;
@@ -326,11 +273,7 @@ module mojo_top (
       alumod.alufn = 6b100011;		//subtraction operation of ALU
       alumod.a = 16b1100100001100001;	//input a
       alumod.b = 16b0000000000001100;	//input b
-      alu = alumod.alu;
       seg.values = {5d5,5d2,5d10,5d31};
-      io_led[0][7:5] = c{alumod.z, alumod.v, alumod.n};
-      io_led[1] = alu[7:0]; //center 8 leds display first 8 bits of sum
-      io_led[2] = alu[15:8]; //left 8 leds display 8 second bits of sum
       if(io_dip[0][0]){
          state.d = state.MANUAL;}
       counter.d = counter.q+1;
@@ -344,16 +287,12 @@ module mojo_top (
       alumod.alufn = 6b110011;		//compare equals to (True)
       alumod.a = 16b0000000000000101;	//input a
       alumod.b = 16b0000000000000101;	//input b
-      alu = alumod.alu;
       if(io_dip[2][7]){
           alu = alu + b1;}
       if(alu == 16b0000000000000001){
         seg.values = {5d12,5d6,5d14,5d1};}
       else{
         seg.values = {5d14,5d2,5d2,5d31};}
-      io_led[0][7:5] = c{alumod.z, alumod.v, alumod.n};
-      io_led[1] = alu[7:0]; //center 8 leds display first 8 bits of sum
-      io_led[2] = alu[15:8]; //left 8 leds display 8 second bits of sum
       if(io_dip[0][0]){
         state.d = state.MANUAL;}
       counter.d = counter.q+1;
@@ -367,11 +306,7 @@ module mojo_top (
       alumod.alufn = 6b110011;		//compare equals to
       alumod.a = 16b0000000000000101;	//input a
       alumod.b = 16b0000000000000100;	//input b
-      alu = alumod.alu;
       seg.values = {5d12,5d6,5d14,5d22};
-      io_led[0][7:5] = c{alumod.z, alumod.v, alumod.n};
-      io_led[1] = alu[7:0]; //center 8 leds display first 8 bits of sum
-      io_led[2] = alu[15:8]; //left 8 leds display 8 second bits of sum
       if(io_dip[0][0]){
         state.d = state.MANUAL;}
       counter.d = counter.q+1;
@@ -385,11 +320,7 @@ module mojo_top (
       alumod.alufn = 6b110101;		//compare equals to
       alumod.a = 16b0000000000000010;	//input a
       alumod.b = 16b0000000000000011;	//input b
-      alu = alumod.alu;
       seg.values = {5d12,5d6,5d4,5d1};
-      io_led[0][7:5] = c{alumod.z, alumod.v, alumod.n};
-      io_led[1] = alu[7:0]; //center 8 leds display first 8 bits of alu output
-      io_led[2] = alu[15:8]; //left 8 leds display 8 second bits of alu output
       if(io_dip[0][0]){
         state.d = state.MANUAL;}
       counter.d = counter.q+1;
@@ -403,11 +334,7 @@ module mojo_top (
       alumod.alufn = 6b110101;		//compare equals to
       alumod.a = 16b0000000000000110;	//input a
       alumod.b = 16b1111111111111011;	//input b
-      alu = alumod.alu;
       seg.values = {5d12,5d6,5d4,5d22};
-      io_led[0][7:5] = c{alumod.z, alumod.v, alumod.n};
-      io_led[1] = alu[7:0]; //center 8 leds display first 8 bits of sum
-      io_led[2] = alu[15:8]; //left 8 leds display 8 second bits of sum
       if(io_dip[0][0]){
         state.d = state.MANUAL;}
       counter.d = counter.q+1;
@@ -421,11 +348,7 @@ module mojo_top (
       alumod.alufn = 6b110111;		//compare equals to
       alumod.a = 16b1111111111111100;	//input a
       alumod.b = 16b0000000000000111;	//input b
-      alu = alumod.alu;
       seg.values = {5d12,5d4,5d14,5d1};
-      io_led[0][7:5] = c{alumod.z, alumod.v, alumod.n};
-      io_led[1] = alu[7:0]; //center 8 leds display first 8 bits of sum
-      io_led[2] = alu[15:8]; //left 8 leds display 8 second bits of sum
       if(io_dip[0][0]){
         state.d = state.MANUAL;}
       counter.d = counter.q+1;
@@ -439,11 +362,7 @@ module mojo_top (
       alumod.alufn = 6b110111;		//compare equals to
       alumod.a = 16b0000000000000110;	//input a
       alumod.b = 16b0000000000000011;	//input b
-      alu = alumod.alu;
       seg.values = {5d12,5d4,5d14,5d22};
-      io_led[0][7:5] = c{alumod.z, alumod.v, alumod.n};
-      io_led[1] = alu[7:0]; //center 8 leds display first 8 bits of sum
-      io_led[2] = alu[15:8]; //left 8 leds display 8 second bits of sum
       if(io_dip[0][0]){
         state.d = state.MANUAL;}
       counter.d = counter.q+1;
@@ -457,11 +376,7 @@ module mojo_top (
       alumod.alufn = 6b110111;		//compare equals to
       alumod.a = 16b0000000000000101;	//input a
       alumod.b = 16b0000000000000101;	//input b
-      alu = alumod.alu;
       seg.values = {5d12,5d4,5d14,5d30};
-      io_led[0][7:5] = c{alumod.z, alumod.v, alumod.n};
-      io_led[1] = alu[7:0]; //center 8 leds display first 8 bits of sum
-      io_led[2] = alu[15:8]; //left 8 leds display 8 second bits of sum
       if(io_dip[0][0]){
         state.d = state.MANUAL;}
       counter.d = counter.q+1;
@@ -475,11 +390,7 @@ module mojo_top (
       alumod.alufn = 6b100010;		
       alumod.a = 16b0000000000000011;	
       alumod.b = 16b0000000000000010;	
-      alu = alumod.alu;
       seg.values = {5d16,5d16,5d3,5d4};
-      io_led[0][7:5] = c{alumod.z, alumod.v, alumod.n};
-      io_led[1] = alu[7:0]; 
-      io_led[2] = alu[15:8];
       if(io_dip[0][0]){
         state.d = state.MANUAL;}
       counter.d = counter.q+1;
@@ -488,7 +399,7 @@ module mojo_top (
         state.d = state.END;}
         
     state.END:
-      seg.values = {5d31,5d14,5d16,5d13};
+      seg.values = {5d31,5d14,5d16,5d13}; 
     }      
   }
 }
