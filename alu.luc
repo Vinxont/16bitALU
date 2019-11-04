@@ -1,5 +1,5 @@
 module alu (
-    input alufn[6],                 //defining inputs and outputs of module
+    input alufn[6],                 
     input a[16],
     input b[16],
 
@@ -9,43 +9,43 @@ module alu (
     output n
   ) {
 
-  adder add;                        //initialising modules for use
-  compare comp;
-  boolean boole;
+  adder add;                        //initialize all modules created
+  compare compa;
+  boolean boolean;
   shifter shift;
   
   
   always {
-    add.a = a;                      //assigning inputs to adder module
+    add.a = a;                //pairing all inputs to adder
     add.b = b;
     add.alufn = alufn;
-    comp.v = add.v;                 //assigning inputs to compare module
-    comp.n = add.n;
-    comp.z = add.z;
-    comp.alufn = alufn;
-    boole.a = a;                    //assigning inputs to boolean module
-    boole.b = b;
-    boole.alufn = alufn;
-    shift.a = a;                    //assigning inputs to shifter module
+    compa.v = add.v;         //pairing all inputs to comparator
+    compa.n = add.n;
+    compa.z = add.z;
+    compa.alufn = alufn;
+    boolean.a = a;           //pairing all inputs to boolean
+    boolean.b = b;
+    boolean.alufn = alufn;
+    shift.a = a;            //pairing all inputs to shifter
     shift.b = b;
     shift.alufn = alufn;
     
     case(alufn[5:4]){
-      b00:                          //if alufn[5:4] == 00, select adder output 
+      b00:                          //alufn 00, use adder
         alu = add.out; 
-      b01:                          //if alufn[5:4] == 00, select boolean output
+      b01:                          //alufn 01, use boolean
         alu = boole.boolean;
-      b10:                          //if alufn[5:4] == 00, select shifter output
+      b10:                          //alufn 10, use shifter
         alu = shift.sho;
-      b11:                          //if alufn[5:4] == 00, select compare output
-        alu = comp.final;
+      b11:                          //alufn 11,use comparator
+        alu = compa.final;
       default:
         alu = 8b0;
   }
     
-    z = add.z;                      //assign z output
-    v = add.v;                      //assign v output   
-    n = add.n;                      //assign n output
+    z = add.z;                      //z, v, n as output
+    v = add.v;                      
+    n = add.n;                      
 
   }
 }
