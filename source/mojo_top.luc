@@ -113,9 +113,9 @@ module mojo_top (
         alu1.alufn = 6b0;             //alufn for ADD
         alu1.a = 16b0101010101010101; //test input a
         alu1.b = 16b0001000100010001; //test input b
-        if(io_dip[2][7]){             //making output invalid when first io_dip is pushed up
+        if(io_dip[0][7]){             //making output invalid when first io_dip is pushed up
           out = out + b1;}
-        if(out == 16b0110011001100110){   //check error                                   
+        if(out == 16b0110011001100110){   //correct output
           seg.values = {5d10, 5d13, 5d13, 5d31};}
         else{                             //display error on seven segment display
           seg.values = {5d14,5d2,5d2,5d31};}
@@ -125,9 +125,12 @@ module mojo_top (
         if(io_button[4] | counter.q[TIMER]==1){     //right io_button is pressed or clock timer reaches TIMER
           counter.d = 0;
           state.d = state.SUBTRACT1;}
+        if(io_button[0]){     //up io_button
+          counter.d = 0;
+          state.d = state.START;}
 
-    //subtractor (positive)
-    //28912 - 4288 = 24624
+      //subtractor (positive)
+      //28912 - 4288 = 24624
       state.SUBTRACT1:
         alu1.alufn = 6b1;
         alu1.a = 16b0111000011110000;	
@@ -139,6 +142,9 @@ module mojo_top (
         if(io_button[3] | counter.q[TIMER]==1){     //left io_button is pressed, alternate left and right for debouncing
           counter.d = 0;
           state.d = state.SUBTRACT2;}
+        if(io_button[2]){     //down io_button is pressed, alternate left and right for debouncing
+          counter.d = 0;
+          state.d = state.ADD;}
 
       //subtractor (negative)
       // -7 - (1) = -8
@@ -153,6 +159,10 @@ module mojo_top (
         if(io_button[4] | counter.q[TIMER]==1){
           counter.d = 0;
           state.d = state.ADDOVERFLOW;}
+        if(io_button[0]){
+          counter.d = 0;
+          state.d = state.SUBTRACT1;}
+
 
       //check for addition overflow
       // 32767 + 1 = -32768
@@ -167,6 +177,9 @@ module mojo_top (
         if(io_button[3] | counter.q[TIMER]==1){
           counter.d = 0;
           state.d = state.SUBUNDERFLOW;}
+        if(io_button[2]){
+          counter.d = 0;
+          state.d = state.SUBTRACT2;}
 
       //check for subtraction underflow
       // -32768 - 16384  = 8192
@@ -181,13 +194,16 @@ module mojo_top (
         if(io_button[4] | counter.q[TIMER]==1){
           counter.d = 0;
           state.d = state.AND;}
+        if(io_button[0]){
+          counter.d = 0;
+          state.d = state.ADDOVERFLOW;}
 
       //AND boolean
       state.AND:
         alu1.alufn = 6b011000;		//01 for boolean 1000 for AND operation	
         alu1.a = 16b0101010101010101;	//input a
         alu1.b = 16b1010101010101011;	//input b
-        if(io_dip[2][7]){
+        if(io_dip[0][7]){
           out = out + b1;}
         if (out == 16b0000000000000001){
             seg.values = {5d10,5d16,5d13,5d8};}
@@ -199,6 +215,9 @@ module mojo_top (
         if(io_button[3] | counter.q[TIMER]==1){
           counter.d = 0;
           state.d = state.OR;}
+        if(io_button[2]){
+          counter.d = 0;
+          state.d = state.SUBUNDERFLOW;}
 
       //OR boolean
       state.OR:
@@ -212,6 +231,9 @@ module mojo_top (
         if(io_button[4] | counter.q[TIMER]==1){
           counter.d = 0;
           state.d = state.XOR;}
+        if(io_button[0]){
+          counter.d = 0;
+          state.d = state.AND;}
           
       //XOR boolean
       state.XOR:
@@ -225,6 +247,9 @@ module mojo_top (
         if(io_button[3] | counter.q[TIMER]==1){
           counter.d = 0;
           state.d = state.A;}
+        if(io_button[2]){
+          counter.d = 0;
+          state.d = state.OR;}
     
       //A boolean
       state.A:
@@ -238,13 +263,16 @@ module mojo_top (
         if(io_button[4] | counter.q[TIMER]==1){
           counter.d = 0;
           state.d = state.SHL;}
+        if(io_button[0]){
+          counter.d = 0;
+          state.d = state.XOR;}
           
       //check for shift left
       state.SHL:
         alu1.alufn = 6b100000;		//100000 for SHL
         alu1.a = 16b0110011100111100;	//input a
         alu1.b = 16b0000000000000010;	//input b
-        if(io_dip[2][7]){
+        if(io_dip[0][7]){
          out = out + b1;}
         if(out == 16b1001110011110000){
           seg.values = {5d5,5d17,5d4,5d8};}
@@ -256,6 +284,9 @@ module mojo_top (
         if(io_button[3] | counter.q[TIMER]==1){
           counter.d = 0;
           state.d = state.SHR;}
+        if(io_button[2]){
+          counter.d = 0;
+          state.d = state.A;}
 
       //check for shift right
       state.SHR:
@@ -269,6 +300,9 @@ module mojo_top (
         if(io_button[4] | counter.q[TIMER]==1){
           counter.d = 0;
           state.d = state.SRA;}
+        if(io_button[0]){
+          counter.d = 0;
+          state.d = state.SHL;}
 
       //check for shift right arithmetic
       state.SRA:
@@ -282,6 +316,9 @@ module mojo_top (
         if(io_button[3] | counter.q[TIMER]==1){
           counter.d = 0;
           state.d = state.CMPEQT;}
+        if(io_button[2]){
+          counter.d = 0;
+          state.d = state.SHR;}
     
       //check for equal
       //true
@@ -289,7 +326,7 @@ module mojo_top (
         alu1.alufn = 6b110011;		//11 for comparator 0011 for equal
         alu1.a = 16b0100000000000000;	//input a
         alu1.b = 16b0100000000000000;	//input b
-        if(io_dip[2][7]){
+        if(io_dip[0][7]){
           out = out + b1;}
         if(out == 16b0000000000000001){
           seg.values = {5d12,5d6,5d14,5d1};}
@@ -301,6 +338,9 @@ module mojo_top (
         if(io_button[4] | counter.q[TIMER]==1){
           counter.d = 0;
           state.d = state.CMPEQF;}
+        if(io_button[0]){
+          counter.d = 0;
+          state.d = state.SRA;}
 
       //check for equal
       //false
@@ -315,6 +355,9 @@ module mojo_top (
         if(io_button[3] | counter.q[TIMER]==1){
           counter.d = 0;
           state.d = state.CMPLTT;}
+        if(io_button[2]){
+          counter.d = 0;
+          state.d = state.CMPEQT;}
           
       //check for a < b
       //true
@@ -329,6 +372,9 @@ module mojo_top (
         if(io_button[4] | counter.q[TIMER]==1){
           counter.d = 0;
           state.d = state.CMPLTF;}
+        if(io_button[0]){
+          counter.d = 0;
+          state.d = state.CMPEQF;}
     
       //check for a < b
       //false
@@ -343,6 +389,9 @@ module mojo_top (
         if(io_button[3] | counter.q[TIMER]==1){
           counter.d = 0;
           state.d = state.CMPLET1;}
+        if(io_button[2]){
+          counter.d = 0;
+          state.d = state.CMPLTT;}
 
       //check for a <= b
       //true (less than)
@@ -357,6 +406,9 @@ module mojo_top (
         if(io_button[4] | counter.q[TIMER]==1){
           counter.d = 0;
           state.d = state.CMPLEF;}
+        if(io_button[0]){
+          counter.d = 0;
+          state.d = state.CMPLTF;}
              
       //check for a <= b
       //false(larger than)
@@ -371,6 +423,10 @@ module mojo_top (
         if(io_button[3] | counter.q[TIMER]==1){
           counter.d = 0;
           state.d = state.CMPLET2;}
+        if(io_button[2]){
+          counter.d = 0;
+          state.d = state.CMPLET1;}
+
     
       //check for a <= b
       //true (equals to)
@@ -385,6 +441,9 @@ module mojo_top (
         if(io_button[4] | counter.q[TIMER]==1){
           counter.d = 0;
           state.d = state.MUL;}
+        if(io_button[0]){
+          counter.d = 0;
+          state.d = state.CMPLEF;}
       
       //check for a*b
       // 7 * 2 = 14
@@ -392,7 +451,7 @@ module mojo_top (
         alu1.alufn = 6b100010;		
         alu1.a = 16b0000000000000111;	
         alu1.b = 16b0000000000000010;	
-        if(io_dip[2][7]){
+        if(io_dip[0][7]){
             out = out + b1;}
         if(out == 16b0000000000001110){
           seg.values = {5d16,5d16,5d3,5d4};}
@@ -404,6 +463,9 @@ module mojo_top (
         if(io_button[3] | counter.q[TIMER]==1){
           counter.d = 0;
           state.d = state.END;}
+        if(io_button[2]){
+          counter.d = 0;
+          state.d = state.CMPLET2;}
         
       state.END:
         seg.values = {5d31,5d14,5d16,5d13};
