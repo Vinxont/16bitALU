@@ -36,7 +36,7 @@ module alu (
       b01:                          //if alufn[5:4] == 00, select boolean output
         alu = boole.boolean;
       b10:                          //if alufn[5:4] == 00, select shifter output
-        alu = shift.s;
+        alu = shift.sho;
       b11:                          //if alufn[5:4] == 00, select compare output
         alu = comp.final;
       default:
