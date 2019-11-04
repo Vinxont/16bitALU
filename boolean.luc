@@ -1,27 +1,30 @@
 module boolean (
-    input alufn[6],               //defining inputs and outputs of module
-    input a[16],
+    input alufn[6],  
     input b[16],
-    output bool[16]
+    input a[16],
+    
+    output boolean[16]
   ) {
   
-  var s;
+  
   var i;
+  var n;
+
 
   always {
-    for(i=0; i<16; i++){          //loop through all the bits in a and b starting from least significant bit
-      s = c{b[i], a[i]};          //connect bits a[i] and b[i] such that s = ba, where s is a 2 bit number
-      case(s){
-        b00:                      //if a[i] = 0 and b[i] = 0, ith bit of bool = alufn[0]
-          bool[i] = alufn[0];
-        b01:                      //if a[i] = 1 and b[i] = 0, ith bit of bool = alufn[1]
-          bool[i] = alufn[1];
-        b10:                      //if a[i] = 0 and b[i] = 1, ith bit of bool = alufn[2]
-          bool[i] = alufn[2];
-        b11:                      //if a[i] = 1 and b[i] = 1, ith bit of bool = alufn[3]
-          bool[i] = alufn[3];
+    for(i=0; i<16; i++){          //iterate through all the bits in a and b starting from least significant bit
+      n = c{b[i], a[i]};          //create a 2bit number n which is ba.
+      case(n){
+        b00://n = 00, boolean bit[i] = alufn[0]
+          boolean[i] = alufn[0];
+        b01://n = 01, boolean bit[i] = alufn[1]
+          boolean[i] = alufn[1];
+        b10://n = 10, boolean bit[i] = alufn[2]
+          boolean[i] = alufn[2];
+        b11://n = 11, boolean bit[i] = alufn[3]
+          boolean[i] = alufn[3];
         default:
-          bool[i] = alufn[0];
+          boolean[i] = alufn[0];
       }
     }
     
