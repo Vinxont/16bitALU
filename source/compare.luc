@@ -3,28 +3,24 @@ module compare (
     input z,
     input v,
     input n,
-    output final[16]
+    output c_out[16]
   ) 
   {
   
   sig out;
   
   always {
-    
     case(alufn[2:1]){         //MUX alufn[2:1] are select signals 
-    
-      b01:                    //select signal 01, check if a == b
-        out = z;
-      b10:                    //select signal 10, check if a < b
-        out = v^n;            
-      b11:                    //select signal 11, check if a <= b
-        out = (n^v)|z;        
       default:
         out = b0;
+      b01:                    //alufn[2:1]=01, check a==b
+        out = z;
+      b10:                    //alufn[2:1]=10, check a<b
+        out = v^n;            
+      b11:                    //alufn[2:1]=11, check a<=b
+        out = (n^v)|z;
     }
-    
-    
-    final[15:1] = 15b0;        //first 15 bits of output are 0 as we only need last digit to show the result(true or false)
-    final[0] = out;           // one bit to show 1(true) and 0(false)
+    c_out[15:1] = 15b0;       //only need last bit for result (1:true or 0:false)
+    c_out[0] = out;
   }
 }
