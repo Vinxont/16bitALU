@@ -34,7 +34,7 @@ module alu (
       b00:                          //alufn 00, use adder
         alu = add.out; 
       b01:                          //alufn 01, use boolean
-        alu = boole.boolean;
+        alu = boolean.boolean;
       b10:                          //alufn 10, use shifter
         alu = shift.sho;
       b11:                          //alufn 11,use comparator
