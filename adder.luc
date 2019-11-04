@@ -31,3 +31,4 @@ module adder (
     n = operation[15];          //if the sign bit is 1 then n = 1
   }
 }
+
