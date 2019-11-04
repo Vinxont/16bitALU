@@ -1,0 +1,34 @@
+module adder (
+    input alufn[1],     //select add or sub mode   
+    input a[16],  
+    input b[16],
+    output out[16],//sum
+    output v,//if have overflow
+    output z,//if all bit is 0
+    output n //if sign bit is 1
+  ) {
+  
+  sig operation[16];             
+
+  always {
+    
+    case(alufn[0]){
+        b0: //a + b if alufn0 = 0
+          operation = a+b;
+          v = (((a[15]) & (b[15]) & (~operation[15])) | ((~a[15]) & (~b[15]) & (operation[15])));       //check for ADD overflow
+        
+        b1: //a - b if alufn0 = 1
+          operation = a-b;
+          v = (((a[15]) & (~b[15]) & (~operation[15])) | ((~a[15]) & (b[15]) & (operation[15])));       //check for SUB overflow
+        
+        default:
+          operation = a+b; 
+          v = (((a[15]) & (b[15]) & (~operation[15])) | ((~a[15]) & (~b[15]) & (operation[15])));     
+    }
+        
+    out = operation[15:0];     //the result of operation is output (sum)
+    z = ~|operation ;            //if all bits of operation is 0 then z=1
+    n = operation[15];          //if the sign bit is 1 then n = 1
+  }
+}
+
