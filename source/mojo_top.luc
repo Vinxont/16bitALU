@@ -57,7 +57,7 @@ module mojo_top (
     avr_rx = bz;            // not using serial port
     
     io_led = 3x{{8h00}};    // turn LEDs off
-    seg.values = {5d2,5d13,5d31,5d31}; //initialising values of seven segment display
+    seg.values = {5d20,5d13,5d31,5d31}; //initialising values of seven segment display
     io_seg = ~seg.seg;
     io_sel = ~seg.sel;
 
@@ -118,7 +118,7 @@ module mojo_top (
         if(out == 16b0110011001100110){   //correct output
           seg.values = {5d10, 5d13, 5d13, 5d31};}
         else{                             //display error on seven segment display
-          seg.values = {5d14,5d2,5d2,5d31};}
+          seg.values = {5d14,5d20,5d20,5d31};}
         if(io_dip[0][0]){                 //manual testing when last io_dip is pushed up
           state.d = state.MANUAL;}
         counter.d = counter.q+1;                    //increment counter (clock)for every code loop
@@ -135,7 +135,7 @@ module mojo_top (
         alu1.alufn = 6b1;
         alu1.a = 16b0111000011110000;	
         alu1.b = 16b0001000011000000;	
-        seg.values = {5d5,5d3,5d11,5d1};
+        seg.values = {5d21,5d22,5d11,5d1};
         if(io_dip[0][0]){
           state.d = state.MANUAL;}
         counter.d = counter.q+1;
@@ -152,7 +152,7 @@ module mojo_top (
         alu1.alufn = 6b1;		
         alu1.a = 16b1111111111111001;
         alu1.b = 16b0000000000000001;
-        seg.values = {5d5,5d3,5d11,5d22};
+        seg.values = {5d21,5d22,5d11,5d2};
         if(io_dip[0][0]){
           state.d = state.MANUAL;}
         counter.d = counter.q+1;
@@ -170,7 +170,7 @@ module mojo_top (
         alu1.alufn = 6b0;		
         alu1.a = 16b0111111111111111;	
         alu1.b = 16b0000000000000001;	
-        seg.values = {5d10,5d0,5d4,5d31};
+        seg.values = {5d10,5d0,5d17,5d31};
         if(io_dip[0][0]){
           state.d = state.MANUAL;}
         counter.d = counter.q+1;
@@ -187,7 +187,7 @@ module mojo_top (
         alu1.alufn = 6b1;		
         alu1.a = 16b1000000000000000;
         alu1.b = 16b0100000000000000;	
-        seg.values = {5d5,5d3,5d4,5d31};
+        seg.values = {5d21,5d22,5d17,5d31};
         if(io_dip[0][0]){
           state.d = state.MANUAL;}
         counter.d = counter.q+1;
@@ -206,9 +206,9 @@ module mojo_top (
         if(io_dip[0][7]){
           out = out + b1;}
         if (out == 16b0000000000000001){
-            seg.values = {5d10,5d16,5d13,5d8};}
+            seg.values = {5d10,5d18,5d13,5d8};}
         else {
-            seg.values = {5d14,5d2,5d2,5d31};}
+            seg.values = {5d14,5d20,5d20,5d31};}
         if(io_dip[0][0]){
           state.d = state.MANUAL;}
         counter.d = counter.q+1;
@@ -224,7 +224,7 @@ module mojo_top (
         alu1.alufn = 6b011110;		//1110 for OR operation
         alu1.a = 16b0001000100010001;	//input a
         alu1.b = 16b1001100110011001;	//input b
-        seg.values = {5d0,5d2,5d31,5d31};
+        seg.values = {5d0,5d20,5d31,5d31};
         if(io_dip[0][0]){
           state.d = state.MANUAL;}
         counter.d = counter.q+1;
@@ -240,7 +240,7 @@ module mojo_top (
         alu1.alufn = 6b010110;		//0110 for XOR operation
         alu1.a = 16b0101010101010101;	//input a
         alu1.b = 16b1010101010101001;	//input b
-        seg.values = {5d17,5d0,5d2,5d31};
+        seg.values = {5d16,5d0,5d20,5d31};
         if(io_dip[0][0]){
           state.d = state.MANUAL;}
         counter.d = counter.q+1;
@@ -275,9 +275,9 @@ module mojo_top (
         if(io_dip[0][7]){
          out = out + b1;}
         if(out == 16b1001110011110000){
-          seg.values = {5d5,5d17,5d4,5d8};}
+          seg.values = {5d21,5d16,5d17,5d8};}
         else{
-          seg.values = {5d14,5d2,5d2,5d31};}
+          seg.values = {5d14,5d20,5d20,5d31};}
         if(io_dip[0][0]){
           state.d = state.MANUAL;}
         counter.d = counter.q+1;
@@ -293,7 +293,7 @@ module mojo_top (
         alu1.alufn = 6b100001;		//100001 for SHR
         alu1.a = 16b0110011100111100;	//input a
         alu1.b = 16b0000000000000100;	//input b
-        seg.values = {5d5,5d17,5d2,5d31};
+        seg.values = {5d21,5d16,5d20,5d31};
         if(io_dip[0][0]){
           state.d = state.MANUAL;}
         counter.d = counter.q+1;
@@ -309,7 +309,7 @@ module mojo_top (
         alu1.alufn = 6b100011;		//100011 for SRA  
         alu1.a = 16b1100100001100001;	//input a
         alu1.b = 16b0000000000000010;	//input b
-        seg.values = {5d5,5d2,5d10,5d31};
+        seg.values = {5d21,5d20,5d10,5d31};
         if(io_dip[0][0]){
            state.d = state.MANUAL;}
         counter.d = counter.q+1;
@@ -329,9 +329,9 @@ module mojo_top (
         if(io_dip[0][7]){
           out = out + b1;}
         if(out == 16b0000000000000001){
-          seg.values = {5d12,5d6,5d14,5d1};}
+          seg.values = {5d12,5d19,5d14,5d1};}
         else{
-          seg.values = {5d14,5d2,5d2,5d31};}
+          seg.values = {5d14,5d20,5d20,5d31};}
         if(io_dip[0][0]){
           state.d = state.MANUAL;}
         counter.d = counter.q+1;
@@ -348,7 +348,7 @@ module mojo_top (
         alu1.alufn = 6b110011;		//11 for comparator 0011 for equal
         alu1.a = 16b0000111111111111;	//input a
         alu1.b = 16b0000000000000000;	//input b
-        seg.values = {5d12,5d6,5d14,5d22};
+        seg.values = {5d12,5d19,5d14,5d2};
         if(io_dip[0][0]){
           state.d = state.MANUAL;}
         counter.d = counter.q+1;
@@ -365,7 +365,7 @@ module mojo_top (
         alu1.alufn = 6b110101;		//11 for comparator 0101 for <
         alu1.a = 16b0000000000000001;	//input a
         alu1.b = 16b0000000000000111;	//input b
-        seg.values = {5d12,5d6,5d4,5d1};
+        seg.values = {5d12,5d19,5d17,5d1};
         if(io_dip[0][0]){
           state.d = state.MANUAL;}
         counter.d = counter.q+1;
@@ -382,7 +382,7 @@ module mojo_top (
         alu1.alufn = 6b110101;		//11 for comparator 0101 for <
         alu1.a = 16b0000000000000001;	//input a
         alu1.b = 16b1111111111111111;	//input b
-        seg.values = {5d12,5d6,5d4,5d22};
+        seg.values = {5d12,5d19,5d17,5d2};
         if(io_dip[0][0]){
           state.d = state.MANUAL;}
         counter.d = counter.q+1;
@@ -399,7 +399,7 @@ module mojo_top (
         alu1.alufn = 6b110111;		//11 for comparator 0111 for <=
         alu1.a = 16b1111111100001100;	//input a
         alu1.b = 16b0000000001111111;	//input b
-        seg.values = {5d12,5d4,5d14,5d1};
+        seg.values = {5d12,5d17,5d14,5d1};
         if(io_dip[0][0]){
           state.d = state.MANUAL;}
         counter.d = counter.q+1;
@@ -416,7 +416,7 @@ module mojo_top (
         alu1.alufn = 6b110111;		//11 for comparator 0111 for <=
         alu1.a = 16b0000000000001100;	//input a
         alu1.b = 16b0000000000000110;	//input b
-        seg.values = {5d12,5d4,5d14,5d22};
+        seg.values = {5d12,5d17,5d14,5d2};
         if(io_dip[0][0]){
           state.d = state.MANUAL;}
         counter.d = counter.q+1;
@@ -434,7 +434,7 @@ module mojo_top (
         alu1.alufn = 6b110111;		//11 for comparator 0111 for <=
         alu1.a = 16b0000000000000111;	//input a
         alu1.b = 16b0000000000000111;	//input b
-        seg.values = {5d12,5d4,5d14,5d30};
+        seg.values = {5d12,5d17,5d14,5d20};
         if(io_dip[0][0]){
           state.d = state.MANUAL;}
         counter.d = counter.q+1;
@@ -454,9 +454,9 @@ module mojo_top (
         if(io_dip[0][7]){
             out = out + b1;}
         if(out == 16b0000000000001110){
-          seg.values = {5d16,5d16,5d3,5d4};}
+          seg.values = {5d18,5d18,5d22,5d17};}
         else{
-          seg.values = {5d14,5d2,5d2,5d31};}
+          seg.values = {5d14,5d20,5d20,5d31};}
         if(io_dip[0][0]){
           state.d = state.MANUAL;}
         counter.d = counter.q+1;
@@ -468,7 +468,7 @@ module mojo_top (
           state.d = state.CMPLET2;}
         
       state.END:
-        seg.values = {5d31,5d14,5d16,5d13};
+        seg.values = {5d31,5d14,5d18,5d13};
         if(io_button[1] == 1){
            state.d = state.ADD;}
     }      
