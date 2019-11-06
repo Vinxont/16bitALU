@@ -57,7 +57,6 @@ module mojo_top (
     avr_rx = bz;            // not using serial port
     
     io_led = 3x{{8h00}};    // turn LEDs off
-    seg.values = {5d20,5d13,5d31,5d31}; //initialising values of seven segment display
     io_seg = ~seg.seg;
     io_sel = ~seg.sel;
 
@@ -68,43 +67,46 @@ module mojo_top (
     alu1.a = a;           //setting alu a
     alu1.b = b;           //setting alu b
     out = alu1.alu;       //getting alu output
-    io_led[2:1] = c{{out[15:8]},{out[7:0]}};                                 
-    io_led[0][7:5] = c{alu1.z, alu1.v, alu1.n};       
+    io_led[2:1] = c{{out[15:8]},{out[7:0]}};
+    io_led[0][7:5] = c{alu1.z, alu1.v, alu1.n};
 
     case (state.q){
       state.START:
+        seg.values = {5d20,5d13,5d31,5d31}; //initialising values of seven segment display
         if(io_button[1] == 1){      //auto testing when center button is pressed
-           state.d = state.ADD;}
-        if(io_dip[0][0]){           //manual testing when last io_dip is pushed up
-            state.d = state.MANUAL;}
+          state.d = state.ADD;}
+        if(io_dip[0][0]){           //manual testing when io_dip[0][0] is pushed up
+          state.d = state.MANUAL;}
     
       state.MANUAL:                   //manual test state
-        if(io_dip[0][1]){             //if switch[0][1] is high, switch[1] and switch[2] become inputs for a
-          a[7:0] = io_dip[1];
-          a[15:8] = io_dip[2];
-          if(io_button[1]){           //if button is pressed, store input a into a d flip flop
-            store_a.d = a;
-          }
+        a[15:0]=c{io_dip[2],io_dip[1]};
+        b[15:0]=c{io_dip[2],io_dip[1]};
+        if (a ==0 && b==0) {
+          io_led[0][0] = 1;
+          seg.values = {5d18, 5d18, 5d10, 5d18};
+        }
+        if(io_dip[0][1] && io_button[0]){             //if io_dip[0][1] is high and io_dip[0][2] is low, io_dip[1] and io_dip[2] become inputs for a
+          store_a.d = a;
+          seg.values = {5d18, 5d18, 5d10, 5d10};
         } 
-        else {                        //if switch[0][1] is low, switch[1] and switch[2] become inputs for b
-          b[7:0] = io_dip[1];
-          b[15:8] = io_dip[2];
-          if(io_button[1]){           //if button is pressed, store input b into a d flip flop
-            store_b.d = b;
-          }
+        if(io_dip[0][1] && io_button[2]) {            //if io_dip[0][2] is high and io_dip[0][1] is low, io_dip[1] and io_dip[2] become inputs for b
+          store_b.d = b;
+          seg.values = {5d18, 5d18, 5d10, 5d11};
         }
         alufn = io_dip[0][7:2];       //assigning dip switches to alufn input
-        if(io_button[3]){             //if button is pressed, store input alufn into a d flip flip
-          store_alufn.d = alufn;}                  
-        if(io_button[4]){             //if button is pressed, reset a,b,alufn
+        if(io_dip[0][1] && io_button[3]){             //if left button is pressed, store input alufn into a d flip flip
+          store_alufn.d = alufn;
+          seg.values = {5d18, 5d18, 5d10, 5d0};}
+        if(io_dip[0][1] && io_button[4]){             //if right button is pressed, reset a,b,alufn
           store_a.d = 16b0;
           store_b.d = 16b0;
           store_alufn.d = 6b0;}
         alu1.a = store_a.q;         //input stored value of a into module alu
         alu1.b = store_b.q;         //input stored value of b into module alu
         alu1.alufn = store_alufn.q; //input stored value of alufn into module alu
-        io_led[0][0] = 1;
-        if(io_button[2]){             //if button is pressed, return to initial state
+        if(~io_dip[0][0]){          //exit manual testing when last io_dip is pushed down
+          io_led[0][0]=0;
+          seg.values = {5d20,5d13,5d31,5d31};
           state.d = state.START;}
 
       //adder
@@ -182,7 +184,7 @@ module mojo_top (
           state.d = state.SUBTRACT2;}
 
       //check for subtraction underflow
-      // -32768 - 16384  = 8192
+      // -32768 - 16384  = 16384
       state.SUBUNDERFLOW:
         alu1.alufn = 6b1;		
         alu1.a = 16b1000000000000000;
@@ -223,7 +225,7 @@ module mojo_top (
       state.OR:
         alu1.alufn = 6b011110;		//1110 for OR operation
         alu1.a = 16b0001000100010001;	//input a
-        alu1.b = 16b1001100110011001;	//input b
+        alu1.b = 16b1001100110011001;	//input b\
         seg.values = {5d0,5d20,5d31,5d31};
         if(io_dip[0][0]){
           state.d = state.MANUAL;}
