@@ -43,7 +43,6 @@ module mojo_top (
   sig b[16];
   sig alufn[6];
   sig out[16];
-  var st;
    
   alu alu1;                 //creating instance of alu
   const TIMER = 28;         //constant for clock to switch states
@@ -148,7 +147,6 @@ module mojo_top (
         if(out == 16b0110000000110000){   //correct output
           seg.values = {5d21,5d11,5d1,5d31};}
         else{                             //go to error state
-          st=2;
           state.d = state.ERR;}
         counter.d = counter.q+1;                    //increment counter (clock) for every code loop
         if(io_button[3] | counter.q[TIMER]==1){     //left io_button is pressed, alternate left and right for debouncing
@@ -171,7 +169,6 @@ module mojo_top (
         if(out == 16b1111111111111000){   //correct output
           seg.values = {5d21,5d11,5d2,5d31};}
         else{                             //go to error state
-          st=3;
           state.d = state.ERR;}
         counter.d = counter.q+1;
         if(io_button[4] | counter.q[TIMER]==1){
@@ -194,7 +191,6 @@ module mojo_top (
         if(out == 16b1000000000000000){   //correct output
           seg.values = {5d10,5d0,5d17,5d31};}
         else{                             //go to error state
-          st=4;
           state.d = state.ERR;}
         counter.d = counter.q+1;
         if(io_button[3] | counter.q[TIMER]==1){
@@ -217,7 +213,6 @@ module mojo_top (
         if(out == 16b0100000000000000){   //correct output
           seg.values = {5d21,5d22,5d17,5d31};}
         else{                             //go to error state
-          st=5;
           state.d = state.ERR;}
         counter.d = counter.q+1;
         if(io_button[4] | counter.q[TIMER]==1){
@@ -237,7 +232,6 @@ module mojo_top (
         if (out == 16b0000000000000001){
             seg.values = {5d10,5d18,5d13,5d31};}
         else{                             //go to error state
-          st=6;
           state.d = state.ERR;}
         if(io_dip[0][0]){
           state.d = state.MANUAL;}
@@ -261,7 +255,6 @@ module mojo_top (
         if (out == 16b1001100110011001){
             seg.values = {5d0,5d20,5d31,5d31};}
         else{                             //go to error state
-          st=7;
           state.d = state.ERR;}
         counter.d = counter.q+1;
         if(io_button[4] | counter.q[TIMER]==1){
@@ -283,7 +276,6 @@ module mojo_top (
         if (out == 16b1111111111111100){
             seg.values = {5d16,5d0,5d20,5d31};}
         else{                             //go to error state
-          st=8;
           state.d = state.ERR;}
         counter.d = counter.q+1;
         if(io_button[3] | counter.q[TIMER]==1){
@@ -305,7 +297,6 @@ module mojo_top (
         if (out == 16b0101010101010101){
             seg.values = {5d10,5d31,5d31,5d31};}
         else{                             //go to error state
-          st=9;
           state.d = state.ERR;}
         counter.d = counter.q+1;
         if(io_button[4] | counter.q[TIMER]==1){
@@ -325,7 +316,6 @@ module mojo_top (
         if(out == 16b1001110011110000){
           seg.values = {5d21,5d16,5d17,5d31};}
         else{                             //go to error state
-          st=10;
           state.d = state.ERR;}
         if(io_dip[0][0]){
           state.d = state.MANUAL;}
@@ -349,7 +339,6 @@ module mojo_top (
         if(out == 16b0000011001110011){
           seg.values = {5d21,5d16,5d20,5d31};}
         else{                             //go to error state
-          st=11;
           state.d = state.ERR;}
         counter.d = counter.q+1;
         if(io_button[4] | counter.q[TIMER]==1){
@@ -371,7 +360,6 @@ module mojo_top (
         if(out == 16b1111001000011000){
           seg.values = {5d21,5d20,5d10,5d31};}
         else{                             //go to error state
-          st=12;
           state.d = state.ERR;}
         counter.d = counter.q+1;
         if(io_button[3] | counter.q[TIMER]==1){
@@ -392,7 +380,6 @@ module mojo_top (
         if(out == 16b0000000000000001){
           seg.values = {5d19,5d14,5d1,5d31};}
         else{                             //go to error state
-          st=13;
           state.d = state.ERR;}
         if(io_dip[0][0]){
           state.d = state.MANUAL;}
@@ -417,7 +404,6 @@ module mojo_top (
         if(out == 16b0000000000000000){
           seg.values = {5d19,5d14,5d2,5d31};}
         else{                             //go to error state
-          st=14;
           state.d = state.ERR;}
         counter.d = counter.q+1;
         if(io_button[3] | counter.q[TIMER]==1){
@@ -440,7 +426,6 @@ module mojo_top (
         if(out == 16b0000000000000001){
           seg.values = {5d19,5d17,5d1,5d31};}
         else{                             //go to error state
-          st=15;
           state.d = state.ERR;}
         counter.d = counter.q+1;
         if(io_button[4] | counter.q[TIMER]==1){
@@ -463,7 +448,6 @@ module mojo_top (
         if(out == 16b0000000000000000){
           seg.values = {5d19,5d17,5d2,5d31};}
         else{                             //go to error state
-          st=16;
           state.d = state.ERR;}
         counter.d = counter.q+1;
         if(io_button[3] | counter.q[TIMER]==1){
@@ -486,7 +470,6 @@ module mojo_top (
         if(out == 16b0000000000000001){
           seg.values = {5d17,5d14,5d1,5d31};}
         else{                             //go to error state
-          st=17;
           state.d = state.ERR;}
         counter.d = counter.q+1;
         if(io_button[4] | counter.q[TIMER]==1){
@@ -509,7 +492,6 @@ module mojo_top (
         if(out == 16b0000000000000000){
           seg.values = {5d17,5d14,5d2,5d31};}
         else{                             //go to error state
-          st=18;
           state.d = state.ERR;}
         counter.d = counter.q+1;
         if(io_button[3] | counter.q[TIMER]==1){
@@ -531,7 +513,6 @@ module mojo_top (
         if(out == 16b0000000000000001){
           seg.values = {5d17,5d14,5d20,5d31};}
         else{                             //go to error state
-          st=19;
           state.d = state.ERR;}
         counter.d = counter.q+1;
         if(io_button[4] | counter.q[TIMER]==1){
@@ -552,7 +533,6 @@ module mojo_top (
         if(out == 16b0000000000001110){
           seg.values = {5d16,5d31,5d31,5d31};}
         else{                             //go to error state
-          st=20;
           state.d = state.ERR;}
         if(io_dip[0][0]){
           state.d = state.MANUAL;}
