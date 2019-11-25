@@ -15,7 +15,7 @@ module multiply (
   
   //multiplication by breaking a and times one by one
   always {
-   s7[7:0] = ((8 x{a[7]}) & (b[7:0])) << 7; duplicating the 8th bit for input a and 
+   s7[7:0] = ((8 x{a[7]}) & (b[7:0])) << 7; //duplicating the 8th bit for input a and 
    s6[7:0] = ((8 x{a[6]}) & (b[7:0])) << 6;
    s5[7:0] = ((8 x{a[5]}) & (b[7:0])) << 5;
    s4[7:0] = ((8 x{a[4]}) & (b[7:0])) << 4;
